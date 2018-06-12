@@ -20,6 +20,9 @@ UKF::UKF() {
   // if this is false, radar measurements will be ignored (except during init)
   use_radar_ = true;
 
+  //if fals do not output NIS
+  collect_nis_ = false;
+
   // initial state vector
   x_ = VectorXd(5);
 
@@ -302,6 +305,12 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   //residual
   VectorXd z_diff = meas_package.raw_measurements_ - z_pred;
 
+  //NIS
+  if (collect_nis_) {
+    double nis = (z_diff.transpose()) * (S.inverse()) * z_diff;
+    std::cout << "L " << nis << std::endl;
+  }
+
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
@@ -400,6 +409,12 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   //angle normalization
   while (z_diff(1)> M_PI) z_diff(1)-=2.*M_PI;
   while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;
+
+  //NIS
+  if (collect_nis_) {
+    double nis = (z_diff.transpose()) * (S.inverse()) * z_diff;
+    std::cout << "R " << nis << std::endl;
+  }
 
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
