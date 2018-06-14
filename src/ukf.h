@@ -77,6 +77,15 @@ private:
   ///* Weights of sigma points
   VectorXd weights_;
 
+  ///* Measurement noise covariance matrix for radar
+  MatrixXd R_radar_;
+
+  ///* Measurement noise covariance matrix for lidar
+  MatrixXd R_lidar_;
+
+  ///* Measurement matrix for lidar
+  MatrixXd H_lidar_;
+
   ///* State dimension
   int n_x_;
 
